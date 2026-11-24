@@ -1,14 +1,20 @@
 import { existsSync } from "node:fs";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { createSplitSession } from "./branch.ts";
+import { HELP, parseArgs } from "./help.ts";
 import { openInNewPane } from "./herdr.ts";
 import { pickEntry } from "./picker.ts";
 
 export default function (pi: ExtensionAPI) {
 	pi.registerCommand("split", {
-		description: "Branch this conversation at a message you pick into a new Herdr pane",
-		handler: async (_args, ctx) => {
+		description: "Branch this conversation at a message you pick into a new Herdr pane (--help)",
+		// No argument completions: with the menu open, Enter on "/split " would insert --help instead of splitting.
+		handler: async (args, ctx) => {
 			const fail = (message: string) => ctx.ui.notify(`/split: ${message}`, "error");
+
+			const parsed = parseArgs(args);
+			if (parsed.kind === "help") return ctx.ui.notify(HELP, "info");
+			if (parsed.kind === "unknown") return fail(`unknown argument "${parsed.text}", try /split --help`);
 
 			if (ctx.mode !== "tui") return fail("needs interactive Pi");
 			if (process.env.HERDR_ENV !== "1" || !process.env.HERDR_PANE_ID) return fail("Pi is not running in a Herdr pane");
