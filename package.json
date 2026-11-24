@@ -1,0 +1,13 @@
+{
+  "name": "pi-split",
+  "version": "0.1.0",
+  "private": true,
+  "description": "/split: branch the current Pi conversation into a new Herdr pane",
+  "type": "module",
+  "pi": { "extensions": ["./index.ts"] },
+  "scripts": { "test": "node --test test/*.test.ts" },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  }
+}
